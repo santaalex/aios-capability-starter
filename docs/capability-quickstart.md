@@ -51,7 +51,7 @@ python tools/aios-capability verify \
 真实客户文件不进入本仓库。把授权样本放在 `local-inputs/` 或仓库外的项目目录，
 只把脱敏后的最小期望结果写进候选包。
 
-## 6. 交回内部发布环境
+## 6. 交回 AIOS 发布环境
 
 交回 ZIP、测试报告和必要的 Adapter 候选包。开发电脑不持有签名私钥，不直接登记
 Control Plane，不直接给客户设备分配能力。

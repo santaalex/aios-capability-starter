@@ -1,11 +1,7 @@
 # 来源与兼容基线
 
-Starter v0.1.0 从 AIOS 主仓中已验收的 Capability Pack v1 开发范式抽取并脱敏。
-
-- authoritative source commit:
-  `52943e2a2967bbb9b7fa3c703871f650527be66b`
-- source change:
-  `feat: add capability pack starter workflow`
+Starter v0.1.0 从已验收的 AIOS Capability Pack v1 开发范式抽取并脱敏。
+精确的内部来源记录由 AIOS 发布环境保留，不在公开开发包中暴露。
 - pack schema version: `1.0`
 - runtime API: `aios-capability-runtime.v1`
 

@@ -3,7 +3,7 @@
 复制下面整段，并把方括号里的内容替换为本次能力信息：
 
 ```text
-请使用私有仓库 santaalex/aios-capability-starter 开发一个独立的 AIOS
+请使用公开仓库 santaalex/aios-capability-starter 开发一个独立的 AIOS
 Capability Pack。
 
 能力目标：[用一句中文写清楚工程师输入什么、能力做什么、输出什么]
