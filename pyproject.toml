@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aios-capability-starter"
+version = "0.1.0"
+description = "Minimal standalone development kit for AIOS Capability Packs"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+aios-capability = "aios_capability_starter.pack:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]

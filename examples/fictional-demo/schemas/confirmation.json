@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "虚构紧固件批次汇总确认",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "confirmed"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "confirmed": {
+      "type": "boolean"
+    }
+  }
+}

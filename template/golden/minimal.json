@@ -1,0 +1,15 @@
+{
+  "case_id": "minimal",
+  "description": "用一个最小真实授权样本替换本占位案例。",
+  "input": {
+    "schema_version": "1.0",
+    "capability_id": "__CAPABILITY_ID__",
+    "input": {}
+  },
+  "expected": {
+    "schema_version": "1.0",
+    "capability_id": "__CAPABILITY_ID__",
+    "status": "NOT_IMPLEMENTED",
+    "message": "请先实现能力并接入 AIOS Core 固定入口。"
+  }
+}

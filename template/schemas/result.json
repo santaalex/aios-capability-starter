@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "__DISPLAY_NAME_JSON__结果",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capability_id",
+    "status",
+    "message"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "capability_id": {
+      "const": "__CAPABILITY_ID__"
+    },
+    "status": {
+      "enum": [
+        "NOT_IMPLEMENTED",
+        "COMPLETED",
+        "FAILED"
+      ]
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

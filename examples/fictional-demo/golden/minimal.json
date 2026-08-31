@@ -1,0 +1,30 @@
+{
+  "case_id": "minimal",
+  "description": "完全虚构的紧固件汇总示例，不含客户信息。",
+  "input": {
+    "schema_version": "1.0",
+    "capability_id": "fictional-fastener-summary",
+    "input": {
+      "items": [
+        {
+          "name": "DEMO-A",
+          "quantity": 2,
+          "nominal_length_mm": 10
+        },
+        {
+          "name": "DEMO-B",
+          "quantity": 3,
+          "nominal_length_mm": 8
+        }
+      ]
+    }
+  },
+  "expected": {
+    "schema_version": "1.0",
+    "capability_id": "fictional-fastener-summary",
+    "status": "COMPLETED",
+    "message": "已汇总 5 个虚构紧固件。",
+    "total_items": 5,
+    "total_nominal_length_mm": 44
+  }
+}

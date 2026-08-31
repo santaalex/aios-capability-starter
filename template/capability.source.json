@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "__CAPABILITY_ID__",
+  "version": "__VERSION__",
+  "display_name": "__DISPLAY_NAME_JSON__",
+  "release": {
+    "stage": "CANDIDATE",
+    "channel": "pilot"
+  },
+  "compatibility": {
+    "core_min": "0.1.22",
+    "core_max_exclusive": "0.2.0",
+    "runtime_api": "aios-capability-runtime.v1"
+  },
+  "execution": {
+    "kind": "PYTHON_SUBPROCESS",
+    "entrypoint": "runtime/main.py"
+  },
+  "contracts": {
+    "input": "schemas/input.json",
+    "confirmation": "schemas/confirmation.json",
+    "result": "schemas/result.json"
+  },
+  "ui": {
+    "form": "ui/form.json",
+    "result": "ui/result.json"
+  },
+  "skills": [
+    "skills/__CAPABILITY_ID__/SKILL.md"
+  ],
+  "golden_cases": [
+    "golden/minimal.json"
+  ],
+  "validation": {
+    "golden_case_ids": [
+      "minimal"
+    ],
+    "required_checks": [
+      "contract",
+      "golden"
+    ]
+  },
+  "signature_policy": {
+    "scheme": "ED25519_DETACHED_V1",
+    "required_for_activation": true
+  },
+  "components": [
+    {
+      "kind": "RUNTIME",
+      "id": "__CAPABILITY_ID__-runtime",
+      "source": "__SOURCE_ROOT__/runtime/main.py",
+      "path": "runtime/main.py"
+    },
+    {
+      "kind": "INPUT_SCHEMA",
+      "id": "__CAPABILITY_ID__-input",
+      "source": "__SOURCE_ROOT__/schemas/input.json",
+      "path": "schemas/input.json"
+    },
+    {
+      "kind": "CONFIRMATION_SCHEMA",
+      "id": "__CAPABILITY_ID__-confirmation",
+      "source": "__SOURCE_ROOT__/schemas/confirmation.json",
+      "path": "schemas/confirmation.json"
+    },
+    {
+      "kind": "RESULT_SCHEMA",
+      "id": "__CAPABILITY_ID__-result",
+      "source": "__SOURCE_ROOT__/schemas/result.json",
+      "path": "schemas/result.json"
+    },
+    {
+      "kind": "UI_SCHEMA",
+      "id": "__CAPABILITY_ID__-form",
+      "source": "__SOURCE_ROOT__/ui/form.json",
+      "path": "ui/form.json"
+    },
+    {
+      "kind": "UI_SCHEMA",
+      "id": "__CAPABILITY_ID__-result-view",
+      "source": "__SOURCE_ROOT__/ui/result.json",
+      "path": "ui/result.json"
+    },
+    {
+      "kind": "SKILL",
+      "id": "__CAPABILITY_ID__-skill",
+      "source": "__SOURCE_ROOT__/skills/__CAPABILITY_ID__/SKILL.md",
+      "path": "skills/__CAPABILITY_ID__/SKILL.md"
+    },
+    {
+      "kind": "GOLDEN_CASE",
+      "id": "minimal",
+      "source": "__SOURCE_ROOT__/golden/minimal.json",
+      "path": "golden/minimal.json"
+    },
+    {
+      "kind": "DOCUMENTATION",
+      "id": "__CAPABILITY_ID__-readme",
+      "source": "__SOURCE_ROOT__/docs/README.md",
+      "path": "docs/README.md"
+    }
+  ]
+}

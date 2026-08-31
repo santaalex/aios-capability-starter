@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aios.local/schemas/capability-contract.v1.schema.json",
+  "title": "AIOS Capability Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capability_id",
+    "version",
+    "display_name",
+    "compatibility",
+    "execution",
+    "contracts",
+    "ui",
+    "skills",
+    "golden_cases"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capability_id": { "$ref": "#/$defs/capability_id" },
+    "version": { "$ref": "#/$defs/semver" },
+    "display_name": { "type": "string", "minLength": 1 },
+    "compatibility": { "$ref": "#/$defs/compatibility" },
+    "execution": { "$ref": "#/$defs/execution" },
+    "contracts": { "$ref": "#/$defs/contracts" },
+    "ui": { "$ref": "#/$defs/ui" },
+    "skills": { "$ref": "#/$defs/path_array" },
+    "golden_cases": { "$ref": "#/$defs/path_array" }
+  },
+  "$defs": {
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "path_array": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": { "$ref": "#/$defs/path" }
+    },
+    "compatibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core_min", "core_max_exclusive", "runtime_api"],
+      "properties": {
+        "core_min": { "$ref": "#/$defs/semver" },
+        "core_max_exclusive": { "$ref": "#/$defs/semver" },
+        "runtime_api": { "const": "aios-capability-runtime.v1" }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "entrypoint"],
+      "properties": {
+        "kind": { "const": "PYTHON_SUBPROCESS" },
+        "entrypoint": { "$ref": "#/$defs/path" }
+      }
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["input", "confirmation", "result"],
+      "properties": {
+        "input": { "$ref": "#/$defs/path" },
+        "confirmation": { "$ref": "#/$defs/path" },
+        "result": { "$ref": "#/$defs/path" }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["form", "result"],
+      "properties": {
+        "form": { "$ref": "#/$defs/path" },
+        "result": { "$ref": "#/$defs/path" }
+      }
+    }
+  }
+}

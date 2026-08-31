@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "fictional-fastener-summary",
+  "workbench_card": {
+    "schema_version": "aios-workbench-card.v1",
+    "title": "虚构紧固件批次汇总",
+    "summary": "汇总一组完全虚构的紧固件数量和名义总长度。",
+    "domain": "Starter 示例",
+    "software": "AIOS",
+    "icon": "capability",
+    "inputs": [
+      "虚构紧固件名称、数量和名义长度"
+    ],
+    "outputs": [
+      "总数量和名义总长度"
+    ]
+  },
+  "steps": [
+    {
+      "id": "prepare",
+      "title": "填写虚构数据",
+      "source": "LOCAL_INPUT"
+    },
+    {
+      "id": "start",
+      "title": "开始汇总",
+      "requires": [
+        "prepare"
+      ]
+    }
+  ]
+}

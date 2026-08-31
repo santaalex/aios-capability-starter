@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aios.local/schemas/capability-pack-manifest.v1.schema.json",
+  "title": "AIOS Capability Pack Manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "artifact_type",
+    "capability_id",
+    "version",
+    "display_name",
+    "release",
+    "compatibility",
+    "validation",
+    "signature_policy",
+    "capability_contract",
+    "components"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "artifact_type": { "const": "AIOS_CAPABILITY_PACK" },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "version": { "$ref": "#/$defs/semver" },
+    "display_name": { "type": "string", "minLength": 1 },
+    "release": { "$ref": "#/$defs/release" },
+    "compatibility": { "$ref": "capability-contract.v1.schema.json#/$defs/compatibility" },
+    "validation": { "$ref": "#/$defs/validation" },
+    "signature_policy": { "$ref": "#/$defs/signature_policy" },
+    "capability_contract": { "$ref": "#/$defs/contract_file" },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/component" }
+    }
+  },
+  "$defs": {
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "release": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stage", "channel"],
+      "properties": {
+        "stage": { "enum": ["DRAFT", "CANDIDATE", "RELEASED"] },
+        "channel": { "type": "string", "minLength": 1 }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["golden_case_ids", "required_checks"],
+      "properties": {
+        "golden_case_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "required_checks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "signature_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scheme", "required_for_activation"],
+      "properties": {
+        "scheme": { "const": "ED25519_DETACHED_V1" },
+        "required_for_activation": { "const": true }
+      }
+    },
+    "contract_file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "size_bytes", "sha256"],
+      "properties": {
+        "path": { "const": "capability.json" },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    },
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "id", "path", "size_bytes", "sha256"],
+      "properties": {
+        "kind": {
+          "enum": [
+            "RUNTIME",
+            "ADAPTER",
+            "INPUT_SCHEMA",
+            "CONFIRMATION_SCHEMA",
+            "RESULT_SCHEMA",
+            "UI_SCHEMA",
+            "SKILL",
+            "GOLDEN_CASE",
+            "DOCUMENTATION"
+          ]
+        },
+        "id": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "sha256": { "$ref": "#/$defs/sha256" }
+      }
+    }
+  }
+}

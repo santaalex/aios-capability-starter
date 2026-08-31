@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "__CAPABILITY_ID__",
+  "workbench_card": {
+    "schema_version": "aios-workbench-card.v1",
+    "title": "__DISPLAY_NAME_JSON__",
+    "summary": "请用一句中文说明工程师能用这个能力完成什么工作。",
+    "domain": "工程能力",
+    "software": "AIOS",
+    "icon": "capability",
+    "inputs": [
+      "请填写工程师需要准备的输入"
+    ],
+    "outputs": [
+      "请填写工程师最终会得到的结果"
+    ]
+  },
+  "steps": [
+    {
+      "id": "prepare",
+      "title": "准备输入",
+      "source": "LOCAL_INPUT"
+    },
+    {
+      "id": "start",
+      "title": "开始执行",
+      "requires": [
+        "prepare"
+      ]
+    }
+  ]
+}

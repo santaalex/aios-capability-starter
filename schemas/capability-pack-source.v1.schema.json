@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aios.local/schemas/capability-pack-source.v1.schema.json",
+  "title": "AIOS Capability Pack Source v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "capability_id",
+    "version",
+    "display_name",
+    "release",
+    "compatibility",
+    "execution",
+    "contracts",
+    "ui",
+    "skills",
+    "golden_cases",
+    "validation",
+    "signature_policy",
+    "components"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "capability_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "display_name": { "type": "string", "minLength": 1 },
+    "release": { "$ref": "capability-pack-manifest.v1.schema.json#/$defs/release" },
+    "compatibility": { "$ref": "capability-contract.v1.schema.json#/$defs/compatibility" },
+    "execution": { "$ref": "capability-contract.v1.schema.json#/$defs/execution" },
+    "contracts": { "$ref": "capability-contract.v1.schema.json#/$defs/contracts" },
+    "ui": { "$ref": "capability-contract.v1.schema.json#/$defs/ui" },
+    "skills": { "$ref": "capability-contract.v1.schema.json#/$defs/path_array" },
+    "golden_cases": { "$ref": "capability-contract.v1.schema.json#/$defs/path_array" },
+    "validation": { "$ref": "capability-pack-manifest.v1.schema.json#/$defs/validation" },
+    "signature_policy": { "$ref": "capability-pack-manifest.v1.schema.json#/$defs/signature_policy" },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["kind", "id", "source", "path"],
+        "properties": {
+          "kind": {
+            "enum": [
+              "RUNTIME",
+              "ADAPTER",
+              "INPUT_SCHEMA",
+              "CONFIRMATION_SCHEMA",
+              "RESULT_SCHEMA",
+              "UI_SCHEMA",
+              "SKILL",
+              "GOLDEN_CASE",
+              "DOCUMENTATION"
+            ]
+          },
+          "id": { "type": "string", "minLength": 1 },
+          "source": { "type": "string", "minLength": 1 },
+          "path": { "type": "string", "minLength": 1 }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "schema_version": "1.0",
+  "capability_id": "fictional-fastener-summary",
+  "version": "0.1.0",
+  "display_name": "虚构紧固件批次汇总",
+  "release": {
+    "stage": "CANDIDATE",
+    "channel": "starter-demo"
+  },
+  "compatibility": {
+    "core_min": "0.1.22",
+    "core_max_exclusive": "0.2.0",
+    "runtime_api": "aios-capability-runtime.v1"
+  },
+  "execution": {
+    "kind": "PYTHON_SUBPROCESS",
+    "entrypoint": "runtime/main.py"
+  },
+  "contracts": {
+    "input": "schemas/input.json",
+    "confirmation": "schemas/confirmation.json",
+    "result": "schemas/result.json"
+  },
+  "ui": {
+    "form": "ui/form.json",
+    "result": "ui/result.json"
+  },
+  "skills": [
+    "skills/fictional-fastener-summary/SKILL.md"
+  ],
+  "golden_cases": [
+    "golden/minimal.json"
+  ],
+  "validation": {
+    "golden_case_ids": [
+      "minimal"
+    ],
+    "required_checks": [
+      "contract",
+      "golden"
+    ]
+  },
+  "signature_policy": {
+    "scheme": "ED25519_DETACHED_V1",
+    "required_for_activation": true
+  },
+  "components": [
+    {
+      "kind": "RUNTIME",
+      "id": "fictional-fastener-summary-runtime",
+      "source": "examples/fictional-demo/runtime/main.py",
+      "path": "runtime/main.py"
+    },
+    {
+      "kind": "INPUT_SCHEMA",
+      "id": "fictional-fastener-summary-input",
+      "source": "examples/fictional-demo/schemas/input.json",
+      "path": "schemas/input.json"
+    },
+    {
+      "kind": "CONFIRMATION_SCHEMA",
+      "id": "fictional-fastener-summary-confirmation",
+      "source": "examples/fictional-demo/schemas/confirmation.json",
+      "path": "schemas/confirmation.json"
+    },
+    {
+      "kind": "RESULT_SCHEMA",
+      "id": "fictional-fastener-summary-result",
+      "source": "examples/fictional-demo/schemas/result.json",
+      "path": "schemas/result.json"
+    },
+    {
+      "kind": "UI_SCHEMA",
+      "id": "fictional-fastener-summary-form",
+      "source": "examples/fictional-demo/ui/form.json",
+      "path": "ui/form.json"
+    },
+    {
+      "kind": "UI_SCHEMA",
+      "id": "fictional-fastener-summary-result-view",
+      "source": "examples/fictional-demo/ui/result.json",
+      "path": "ui/result.json"
+    },
+    {
+      "kind": "SKILL",
+      "id": "fictional-fastener-summary-skill",
+      "source": "examples/fictional-demo/skills/fictional-fastener-summary/SKILL.md",
+      "path": "skills/fictional-fastener-summary/SKILL.md"
+    },
+    {
+      "kind": "GOLDEN_CASE",
+      "id": "minimal",
+      "source": "examples/fictional-demo/golden/minimal.json",
+      "path": "golden/minimal.json"
+    },
+    {
+      "kind": "DOCUMENTATION",
+      "id": "fictional-fastener-summary-readme",
+      "source": "examples/fictional-demo/docs/README.md",
+      "path": "docs/README.md"
+    }
+  ]
+}
