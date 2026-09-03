@@ -1,7 +1,8 @@
 # AIOS Capability Starter
 
 这是一个独立、最小、脱敏的 AIOS Capability Pack 开发包。它让另一台电脑上的
-工程师或 Codex 在看不到 AIOS 主仓库的情况下，创建、构建和检查一个能力候选包。
+工程师或任意本机 AI 工具在看不到 AIOS 主仓库和历史聊天的情况下，创建、构建和
+检查一个能力候选包。
 
 本仓库只负责：
 
@@ -9,6 +10,7 @@
 - 定义中文能力卡、输入、确认、结果、Skill 和最小 Golden；
 - 构建确定性的 Capability Pack ZIP；
 - 在交付前检查 ZIP 的结构、组件大小和 SHA-256。
+- 使用 AIOS Task Bundle 描述单次开发任务并生成统一 `result.json`。
 
 本仓库不负责签名、发布、设备分配和生产激活。开发者交回 ZIP 和测试报告后，由
 AIOS 发布环境完成签名和挂载。
@@ -38,13 +40,28 @@ Windows：
 
 详细步骤见 [中文快速指南](docs/capability-quickstart.md)。
 给其他电脑分配开发任务时，可直接使用
-[Codex 任务模板](docs/codex-task-template.md)。
+[工具中立的 Agent 任务模板](docs/agent-task-template.md)。
+
+## 使用 Task Bundle
+
+Task Bundle 让 Codex、Grok、Cursor 或其他工具读取同一个版本化任务合同，而不是复制
+历史聊天。格式说明见 [AIOS Task Bundle v0.1alpha1](docs/task-bundle.md)。
+
+```bash
+./tools/aios-capability task-validate path/to/task.json
+./tools/aios-capability init --task path/to/task.json --repo-root .
+./tools/aios-capability build --task path/to/task.json --repo-root .
+```
+
+最后一步会同时生成候选 Pack ZIP 和 `dist/task-results/<task-id>.result.json`。
+没有 `--task` 时，原有 `init / build / verify` 用法保持不变。
 
 ## 开发者最终交付
 
 ```text
 <capability-id>-<version>.zip
-测试报告
+<task-id>.result.json
+最小功能测试报告
 如确实需要：独立 Adapter 候选包及接口说明
 ```
 
