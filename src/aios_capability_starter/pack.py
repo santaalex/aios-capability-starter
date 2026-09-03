@@ -10,6 +10,19 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from typing import Any, Mapping
 
+from .task_bundle import (
+    TaskBundleError,
+    capability_identity_from_task,
+    create_capability_result,
+    ensure_task_matches_source,
+    load_result,
+    load_task,
+    sha256_file,
+    validate_result,
+    validate_task,
+    write_json_atomic,
+)
+
 PACK_SCHEMA_VERSION = "1.0"
 ARTIFACT_TYPE = "AIOS_CAPABILITY_PACK"
 RUNTIME_API = "aios-capability-runtime.v1"
@@ -756,16 +769,29 @@ def build_parser() -> argparse.ArgumentParser:
     init = subparsers.add_parser(
         "init", help="create a Capability Pack source from the repository starter"
     )
-    init.add_argument("capability_id")
-    init.add_argument("--display-name", required=True)
-    init.add_argument("--version", default="0.1.0")
+    init.add_argument("capability_id", nargs="?")
+    init.add_argument("--display-name")
+    init.add_argument("--version")
+    init.add_argument("--task", type=Path)
     init.add_argument("--repo-root", type=Path, default=Path.cwd())
     build = subparsers.add_parser("build", help="build a deterministic Capability Pack")
-    build.add_argument("source_manifest", type=Path)
+    build.add_argument("source_manifest", nargs="?", type=Path)
     build.add_argument("--repo-root", type=Path, default=Path.cwd())
     build.add_argument("--output", type=Path)
+    build.add_argument("--task", type=Path)
+    build.add_argument("--result-output", type=Path)
     verify = subparsers.add_parser("verify", help="verify one Capability Pack artifact")
     verify.add_argument("pack", type=Path)
+    verify.add_argument("--task", type=Path)
+    task_validate = subparsers.add_parser(
+        "task-validate", help="validate one AIOS Task Bundle"
+    )
+    task_validate.add_argument("task", type=Path)
+    result_validate = subparsers.add_parser(
+        "result-validate", help="validate one AIOS Task Result"
+    )
+    result_validate.add_argument("result", type=Path)
+    result_validate.add_argument("--task", type=Path)
     return parser
 
 
@@ -773,22 +799,142 @@ def main() -> int:
     args = build_parser().parse_args()
     try:
         if args.command == "init":
+            if args.task is not None:
+                if (
+                    args.capability_id is not None
+                    or args.display_name is not None
+                    or args.version is not None
+                ):
+                    raise TaskBundleError(
+                        "init --task derives capability identity; do not also pass "
+                        "capability_id, --display-name, or --version"
+                    )
+                task = load_task(args.task)
+                capability = capability_identity_from_task(task)
+                capability_id = capability["capability_id"]
+                display_name = capability["display_name"]
+                version = capability["version"]
+                expected_source = (
+                    f"capabilities/{capability_id}/{version}/capability.source.json"
+                )
+                if capability["source_manifest"] != expected_source:
+                    raise TaskBundleError(
+                        "init --task requires spec.capability.source_manifest to be "
+                        f"{expected_source}"
+                    )
+            else:
+                if args.capability_id is None or args.display_name is None:
+                    raise CapabilityPackError(
+                        "init requires capability_id and --display-name, or --task"
+                    )
+                capability_id = args.capability_id
+                display_name = args.display_name
+                version = args.version or "0.1.0"
             result = init_pack_source(
-                args.capability_id,
-                display_name=args.display_name,
-                version=args.version,
+                capability_id,
+                display_name=display_name,
+                version=version,
                 repo_root=args.repo_root,
             )
+            if args.task is not None:
+                source_path = Path(result["source_manifest"])
+                ensure_task_matches_source(
+                    task,
+                    source_manifest_path=source_path,
+                    source=_load_json_object(source_path),
+                    repo_root=args.repo_root,
+                )
+                task_summary = validate_task(task)
+                result["task_id"] = task_summary["task_id"]
+                result["task_generation"] = task_summary["generation"]
         elif args.command == "build":
+            task = None
+            source = None
+            if args.result_output is not None and args.task is None:
+                raise TaskBundleError("--result-output requires --task")
+            if args.task is not None:
+                task = load_task(args.task)
+                capability = capability_identity_from_task(task)
+                task_source_path = (
+                    args.repo_root
+                    / Path(*PurePosixPath(capability["source_manifest"]).parts)
+                ).resolve()
+                if args.source_manifest is not None:
+                    source_path = args.source_manifest.resolve()
+                    if source_path != task_source_path:
+                        raise TaskBundleError(
+                            "build source manifest does not match task"
+                        )
+                else:
+                    source_path = task_source_path
+                source = _load_json_object(source_path)
+                ensure_task_matches_source(
+                    task,
+                    source_manifest_path=source_path,
+                    source=source,
+                    repo_root=args.repo_root,
+                )
+            elif args.source_manifest is None:
+                raise CapabilityPackError(
+                    "build requires source_manifest, or --task"
+                )
+            else:
+                source_path = args.source_manifest.resolve()
             result = build_pack(
-                args.source_manifest,
+                source_path,
                 repo_root=args.repo_root,
                 output_path=args.output,
             )
+            if task is not None and source is not None:
+                task_summary = validate_task(task)
+                result_output = args.result_output or (
+                    args.repo_root
+                    / "dist"
+                    / "task-results"
+                    / f"{task_summary['task_id']}.result.json"
+                )
+                task_result = create_capability_result(
+                    task,
+                    artifact_path=Path(result["path"]),
+                    artifact_sha256=result["artifact_sha256"],
+                    artifact_size=Path(result["path"]).stat().st_size,
+                    source_manifest_path=source_path,
+                    source_manifest_sha256=sha256_file(source_path),
+                    repo_root=args.repo_root,
+                )
+                write_json_atomic(result_output.resolve(), task_result)
+                result["task_id"] = task_summary["task_id"]
+                result["task_generation"] = task_summary["generation"]
+                result["task_result"] = str(result_output.resolve())
         elif args.command == "verify":
             result = verify_pack(args.pack)
-    except CapabilityPackError as error:
-        raise SystemExit(f"Capability Pack error: {error}") from error
+            if args.task is not None:
+                task = load_task(args.task)
+                capability = capability_identity_from_task(task)
+                for field in ("capability_id", "version", "display_name"):
+                    if result[field] != capability[field]:
+                        raise TaskBundleError(
+                            f"verified artifact {field} does not match task"
+                        )
+                task_summary = validate_task(task)
+                result["task_id"] = task_summary["task_id"]
+                result["task_generation"] = task_summary["generation"]
+        elif args.command == "task-validate":
+            task = load_task(args.task)
+            summary = validate_task(task)
+            result = {
+                "task_id": summary["task_id"],
+                "generation": summary["generation"],
+                "kind": summary["kind"],
+                "impact": summary["impact"],
+                "status": "VALID",
+            }
+        elif args.command == "result-validate":
+            task = load_task(args.task) if args.task is not None else None
+            result = load_result(args.result, task=task)
+            result = {**validate_result(result, task=task), "status": "VALID"}
+    except (CapabilityPackError, TaskBundleError) as error:
+        raise SystemExit(f"AIOS Starter error: {error}") from error
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))
     return 0
 

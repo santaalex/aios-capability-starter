@@ -1,0 +1,56 @@
+{
+  "api_version": "task.aios.fuinno.cn/v0.1alpha1",
+  "kind": "DeviceDeployment",
+  "metadata": {
+    "task_id": "deploy-fictional-pack-only",
+    "generation": 1,
+    "created_at": "2026-09-03T00:00:00Z",
+    "expires_at": "2026-09-10T00:00:00Z"
+  },
+  "spec": {
+    "objective": "让一台虚构测试设备应用一个纯 Capability Pack 方案，不更新 Desktop。",
+    "non_goals": [
+      "不安装或更新 Desktop。",
+      "不运行真实工程能力。"
+    ],
+    "impact": "pack-only",
+    "target": {
+      "environment": "test",
+      "device_id": "device-fictional-001",
+      "assignment_id": "assignment-fictional-001"
+    },
+    "artifacts": [
+      {
+        "role": "capability-pack",
+        "media_type": "application/zip",
+        "location": "https://example.invalid/fictional-capability-0.1.0.zip",
+        "size_bytes": 12345,
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      }
+    ],
+    "human_actions": [],
+    "acceptance": {
+      "required_checks": [
+        "artifact-integrity",
+        "reported-capability-version",
+        "reconciliation-applied"
+      ],
+      "deliverables": [
+        "device-deployment-result-json"
+      ],
+      "forbidden_changes": [
+        "desktop",
+        "customer-files",
+        "model-api-key"
+      ]
+    },
+    "secrets_policy": {
+      "bundle_must_not_contain": [
+        "activation-code",
+        "device-credential",
+        "model-api-key",
+        "customer-files"
+      ]
+    }
+  }
+}

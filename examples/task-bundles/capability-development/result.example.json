@@ -1,0 +1,87 @@
+{
+  "api_version": "task-result.aios.fuinno.cn/v0.1alpha1",
+  "kind": "CapabilityDevelopmentResult",
+  "metadata": {
+    "task_id": "develop-fictional-fastener-summary",
+    "observed_generation": 1,
+    "completed_at": "2026-09-03T00:01:00Z"
+  },
+  "status": {
+    "outcome": "NEEDS_ATTENTION",
+    "summary": "Capability Pack built and structurally verified; required checks remain: fictional-minimal-golden. Signing, publishing, device assignment, and Windows HIL were not performed.",
+    "conditions": [
+      {
+        "type": "TaskContractValid",
+        "status": "True",
+        "reason": "Validated",
+        "message": "task.json passed AIOS Task Bundle v0.1alpha1 validation."
+      },
+      {
+        "type": "PackBuilt",
+        "status": "True",
+        "reason": "DeterministicBuilderCompleted",
+        "message": "The Capability Pack builder completed successfully."
+      },
+      {
+        "type": "PackVerified",
+        "status": "True",
+        "reason": "ArtifactStructureVerified",
+        "message": "The final ZIP structure, sizes, and component hashes match."
+      },
+      {
+        "type": "AcceptanceComplete",
+        "status": "False",
+        "reason": "RequiredChecksPending",
+        "message": "Required checks not reported as PASS: fictional-minimal-golden"
+      }
+    ]
+  },
+  "delivery": {
+    "capability": {
+      "capability_id": "fictional-fastener-summary",
+      "version": "0.1.0",
+      "display_name": "虚构紧固件批次汇总"
+    },
+    "artifacts": [
+      {
+        "role": "capability-pack",
+        "media_type": "application/zip",
+        "location": "dist/capability-packs/fictional-fastener-summary-0.1.0.zip",
+        "size_bytes": 10534,
+        "sha256": "d45636aa73be25abd40ff1f791d93df89fdd0f4f514826e1a169c70d821e3f27"
+      }
+    ],
+    "source": {
+      "revision": "example-git-revision",
+      "dirty": false,
+      "source_manifest": "examples/fictional-demo/capability.source.json",
+      "source_manifest_sha256": "ab6bca6ea5ba340a3be764ef065d160803c20ab9fcbb4e3437934895e9bcbd65"
+    },
+    "validation": {
+      "performed_checks": [
+        {
+          "name": "task-contract",
+          "status": "PASS"
+        },
+        {
+          "name": "pack-build",
+          "status": "PASS"
+        },
+        {
+          "name": "pack-verify",
+          "status": "PASS"
+        }
+      ],
+      "declared_required_checks": [
+        "task-contract",
+        "pack-build",
+        "pack-verify",
+        "fictional-minimal-golden"
+      ]
+    },
+    "adapter_required": false,
+    "known_limitations": [
+      "示例只处理仓库内虚构 JSON，不代表真实工程算法。"
+    ]
+  }
+}

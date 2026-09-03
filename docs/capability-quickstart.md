@@ -13,6 +13,15 @@
 
 ## 2. 初始化
 
+推荐先从 `task-template/` 创建本次 Task Bundle，再执行：
+
+```bash
+python tools/aios-capability task-validate path/to/task.json
+python tools/aios-capability init --task path/to/task.json --repo-root .
+```
+
+没有 Task Bundle 时仍可使用原命令：
+
 ```bash
 python tools/aios-capability init my-capability \
   --display-name "我的工程能力" --repo-root .
@@ -37,6 +46,19 @@ capabilities/my-capability/0.1.0/
 
 ## 4. 构建和检查
 
+使用 Task Bundle 时：
+
+```bash
+python tools/aios-capability build --task path/to/task.json --repo-root .
+python tools/aios-capability result-validate \
+  dist/task-results/<task-id>.result.json --task path/to/task.json
+```
+
+这会生成标准 `result.json`。如果功能 Golden 尚未真实执行并报告，结果会明确标为
+`NEEDS_ATTENTION`。
+
+不使用 Task Bundle 时：
+
 ```bash
 python tools/aios-capability build \
   capabilities/my-capability/0.1.0/capability.source.json --repo-root .
@@ -53,5 +75,5 @@ python tools/aios-capability verify \
 
 ## 6. 交回 AIOS 发布环境
 
-交回 ZIP、测试报告和必要的 Adapter 候选包。开发电脑不持有签名私钥，不直接登记
-Control Plane，不直接给客户设备分配能力。
+交回 ZIP、`result.json`、功能测试报告和必要的 Adapter 候选包。开发电脑不持有签名
+私钥，不直接登记 Control Plane，不直接给客户设备分配能力。

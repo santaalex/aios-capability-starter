@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://task.aios.fuinno.cn/schemas/task-bundle.v0.1alpha1.schema.json",
+  "title": "AIOS Task Bundle v0.1alpha1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "api_version",
+    "kind",
+    "metadata",
+    "spec"
+  ],
+  "properties": {
+    "api_version": {
+      "const": "task.aios.fuinno.cn/v0.1alpha1"
+    },
+    "kind": {
+      "enum": [
+        "CapabilityDevelopment",
+        "AdapterDevelopment",
+        "DeviceDeployment",
+        "DesktopUpdate"
+      ]
+    },
+    "metadata": {
+      "$ref": "#/$defs/metadata"
+    },
+    "spec": {
+      "$ref": "#/$defs/spec"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "CapabilityDevelopment"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "required": [
+              "capability"
+            ],
+            "properties": {
+              "target": {
+                "properties": {
+                  "environment": {
+                    "const": "development"
+                  }
+                }
+              },
+              "impact": {
+                "enum": [
+                  "pack-only",
+                  "plugin-required",
+                  "desktop-required"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "enum": [
+              "DeviceDeployment",
+              "DesktopUpdate"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "spec": {
+            "properties": {
+              "target": {
+                "required": [
+                  "device_id"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nonEmptyStringArray": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_id",
+        "generation",
+        "created_at"
+      ],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "generation": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "objective",
+        "non_goals",
+        "impact",
+        "target",
+        "acceptance",
+        "secrets_policy"
+      ],
+      "properties": {
+        "objective": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "non_goals": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        },
+        "impact": {
+          "enum": [
+            "pack-only",
+            "customer-pack-only",
+            "plugin-required",
+            "desktop-required",
+            "bootstrap-required",
+            "control-plane-required"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/target"
+        },
+        "capability": {
+          "$ref": "#/$defs/capability"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/artifact"
+          }
+        },
+        "human_actions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/humanAction"
+          }
+        },
+        "acceptance": {
+          "$ref": "#/$defs/acceptance"
+        },
+        "secrets_policy": {
+          "$ref": "#/$defs/secretsPolicy"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment"
+      ],
+      "properties": {
+        "environment": {
+          "enum": [
+            "development",
+            "test",
+            "customer"
+          ]
+        },
+        "repository": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "device_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "assignment_id": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      },
+      "anyOf": [
+        {
+          "required": [
+            "repository"
+          ]
+        },
+        {
+          "required": [
+            "device_id"
+          ]
+        }
+      ]
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "capability_id",
+        "version",
+        "display_name",
+        "source_manifest",
+        "adapter_required",
+        "known_limitations"
+      ],
+      "properties": {
+        "capability_id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+        },
+        "display_name": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "source_manifest": {
+          "type": "string",
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+        },
+        "adapter_required": {
+          "type": "boolean"
+        },
+        "known_limitations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonEmptyString"
+          }
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "role",
+        "media_type",
+        "location",
+        "size_bytes",
+        "sha256"
+      ],
+      "properties": {
+        "role": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "media_type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "location": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "humanAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "required"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "component": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "instructions": {
+          "$ref": "#/$defs/nonEmptyString"
+        }
+      }
+    },
+    "acceptance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required_checks",
+        "deliverables",
+        "forbidden_changes"
+      ],
+      "properties": {
+        "required_checks": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "deliverables": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        },
+        "forbidden_changes": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        }
+      }
+    },
+    "secretsPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bundle_must_not_contain"
+      ],
+      "properties": {
+        "bundle_must_not_contain": {
+          "$ref": "#/$defs/nonEmptyStringArray"
+        }
+      }
+    }
+  }
+}
